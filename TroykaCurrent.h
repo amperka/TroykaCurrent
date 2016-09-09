@@ -18,7 +18,7 @@
 #define ACS712_05        0.185
 #define SAMPLE_TIMES     50
 #define SAMPLE_INTERVAL  1
-#define FAULT_ADC		 5
+#define FAULT_ADC		 0.011
 
 class ACS712
 {
