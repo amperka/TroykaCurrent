@@ -18,23 +18,22 @@ void ACS712::begin() {
 }
 
 float ACS712::readCurrentDC() {
-	int sensorValue;
-  	float sensorVoltage;
-  	float sensorCurrent;
+	int sensorValue = 0;
+  	float sensorVoltage = 0;
+  	float sensorCurrent = 0;
 	for (int i = 0; i < SAMPLE_TIMES; i++) {
     	sensorValue += analogRead(_pin);
     	delay(SAMPLE_INTERVAL);
   	}
-  	sensorValue = sensorValue / SAMPLE_TIMES;
-  	sensorVoltage = (sensorValue * (VREF / 1024.0));
-  	sensorCurrent = (sensorVoltage - VREF / 2 ) / ACS712_05;
+  	sensorValue = sensorValue >> 5;
+  	sensorCurrent = (sensorValue - ADC_COUNT / 2) / 37.888;
   	return sensorCurrent;
 }
-
+// 
 float ACS712::readCurrentAC() {
   	int sensorValue;
   	int maxValue = 0;
-  	int minValue = 1024;
+  	int minValue = ADC_COUNT;
   	float sum;
   	float sensorVoltageAMP;
   	float sensorVoltageRMS;
@@ -50,7 +49,7 @@ float ACS712::readCurrentAC() {
   	}
   	maxValue -= maxValue * FAULT_ADC;
   	minValue += minValue * FAULT_ADC;
-  	sensorVoltageAMP = (((maxValue) - minValue) / 2.0)  * (VREF / 1024.0);
+  	sensorVoltageAMP = (((maxValue) - minValue) / 2.0)  * (VCC / ADC_COUNT);
   	sensorVoltageRMS = sensorVoltageAMP * RMS;
   	sensorCurrentRMS = sensorVoltageRMS / ACS712_05;
   	return sensorCurrentRMS;

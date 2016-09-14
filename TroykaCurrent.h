@@ -13,10 +13,11 @@
 
 #include <Arduino.h>
 
+#define VCC              5.0
+#define ADC_COUNT        1023
 #define RMS              0.707
-#define VREF             5.0
 #define ACS712_05        0.185
-#define SAMPLE_TIMES     50
+#define SAMPLE_TIMES     32
 #define SAMPLE_INTERVAL  1
 #define FAULT_ADC		 0.011
 
