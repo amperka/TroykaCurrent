@@ -39,7 +39,7 @@ float ACS712::readCurrentAC() {
     float sensorCurrent = 0;
     float sensorCurrentRMS = 0;
     unsigned long startTime = millis();
-    while ((millis() - startTime) < 200) {
+    while ((millis() - startTime) < 60) {
         sensorValue = analogRead(_pin);
         if (sensorValue > maxValue) {
             maxValue = sensorValue;
