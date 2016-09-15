@@ -10,13 +10,12 @@ void setup()
   // открываем последовательный порт
   Serial.begin(9600);
 }
- 
+
 void loop()
 {
   // вывод показателей сенсора для переменного тока
   Serial.print("Current is ");
   Serial.print(sensorCurrent.readCurrentAC());
-  Serial.println(" mA");
+  Serial.println(" A");
   delay(100);
 }
- 

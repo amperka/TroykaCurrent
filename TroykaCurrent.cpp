@@ -10,47 +10,46 @@
 
 #include "TroykaCurrent.h"
 
+#define ADC_COUNT           1023
+#define ADC_COUNT_HALF      ADC_COUNT / 2
+#define ADC_COUNT_ACS712_1A 37.88
+#define RMS                 0.707
+#define SAMPLE_TIMES        32
+#define FAULT_ADC           0.011
+
 ACS712::ACS712(uint8_t pin) {
     _pin = pin;
 }
 
-void ACS712::begin() {
+float ACS712::readCurrentDC() {
+    int sensorValue = 0;
+    float sensorCurrent = 0;
+    for (int i = 0; i < SAMPLE_TIMES; i++) {
+        sensorValue += analogRead(_pin);
+    }
+    sensorValue = sensorValue >> 5;
+    sensorCurrent = (sensorValue - ADC_COUNT_HALF) / ADC_COUNT_ACS712_1A;
+    return sensorCurrent;
 }
 
-float ACS712::readCurrentDC() {
-	int sensorValue = 0;
-  	float sensorVoltage = 0;
-  	float sensorCurrent = 0;
-	for (int i = 0; i < SAMPLE_TIMES; i++) {
-    	sensorValue += analogRead(_pin);
-    	delay(SAMPLE_INTERVAL);
-  	}
-  	sensorValue = sensorValue >> 5;
-  	sensorCurrent = (sensorValue - ADC_COUNT / 2) / 37.888;
-  	return sensorCurrent;
-}
-// 
 float ACS712::readCurrentAC() {
-  	int sensorValue;
-  	int maxValue = 0;
-  	int minValue = ADC_COUNT;
-  	float sum;
-  	float sensorVoltageAMP;
-  	float sensorVoltageRMS;
-  	float sensorCurrentRMS;
-  	unsigned long startTime = millis();
-  	while((millis() - startTime) < 200) {
-    	sensorValue = analogRead(_pin);
-    	if (sensorValue > maxValue) {
-      		maxValue = sensorValue;
-    	} else if (sensorValue < minValue) {
-        	minValue = sensorValue;
-    	}
-  	}
-  	maxValue -= maxValue * FAULT_ADC;
-  	minValue += minValue * FAULT_ADC;
-  	sensorVoltageAMP = (((maxValue) - minValue) / 2.0)  * (VCC / ADC_COUNT);
-  	sensorVoltageRMS = sensorVoltageAMP * RMS;
-  	sensorCurrentRMS = sensorVoltageRMS / ACS712_05;
-  	return sensorCurrentRMS;
+    int sensorValue = 0;
+    int maxValue = 0;
+    int minValue = ADC_COUNT;
+    float sensorCurrent = 0;
+    float sensorCurrentRMS = 0;
+    unsigned long startTime = millis();
+    while ((millis() - startTime) < 200) {
+        sensorValue = analogRead(_pin);
+        if (sensorValue > maxValue) {
+            maxValue = sensorValue;
+        } else if (sensorValue < minValue) {
+            minValue = sensorValue;
+        }
+    }
+    maxValue -= maxValue * FAULT_ADC;
+    minValue += minValue * FAULT_ADC;
+    sensorCurrent = (((maxValue) - minValue) / 2.0) / ADC_COUNT_ACS712_1A;
+    sensorCurrentRMS = sensorCurrent * RMS;
+    return sensorCurrentRMS;
 }

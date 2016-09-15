@@ -5,17 +5,17 @@
 // и передаём ему номер пина выходного сигнала
 ACS712 sensorCurrent(A0);
 
-void setup() 
+void setup()
 {
   // открываем последовательный порт
   Serial.begin(9600);
 }
 
-void loop() 
+void loop()
 {
   // вывод показателей сенсора для постоянного тока
   Serial.print("Current is ");
   Serial.print(sensorCurrent.readCurrentDC());
-  Serial.println(" mA");
+  Serial.println(" A");
   delay(100);
 }
